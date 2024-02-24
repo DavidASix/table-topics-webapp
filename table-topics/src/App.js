@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 
 import DropDown from "./components/DropDown";
 import Button from "./components/Button";
@@ -8,6 +8,12 @@ function App() {
   const [green, setGreen] = useState("1:00");
   const [yellow, setYellow] = useState("1:30");
   const [red, setRed] = useState("2:00");
+  const [timer, setTimer] = useState(0);
+  // This could be ascertained by observing the interval ref, but that causes
+  // a delay in re-renders while the ref updates the state
+  const [timerActive, setTimerActive] = useState(false);
+  const interval = useRef(null);
+
   const categories = ["Life", "Work", "School", "Family"];
   const timingOptions = [
     "0:15",
@@ -19,6 +25,79 @@ function App() {
     "1:45",
     "2:00",
   ];
+  // I had considered just updating the value of the color and using it as a variable within class names,
+  // But that method does not trigger tailwinds to generate the required classes, so they are named explicitly here
+  const timerColorScheme = {
+    zinc: {
+      text: "text-zinc-700",
+      ring: "ring-zinc-300",
+      bg: "bg-zinc-300",
+    },
+    green: {
+      text: "text-green-700",
+      ring: "ring-green-300",
+      bg: "bg-green-300",
+    },
+    yellow: {
+      text: "text-yellow-700",
+      ring: "ring-yellow-300",
+      bg: "bg-yellow-300",
+    },
+    red: {
+      text: "text-red-700",
+      ring: "ring-red-300",
+      bg: "bg-red-300",
+    },
+  };
+
+  function formatTime(seconds) {
+    let m = Math.floor(seconds / 60);
+    let s = seconds % 60;
+    while (String(s).length < 2) {
+      s = "0" + s;
+    }
+    return `${m}:${s}`;
+  }
+
+  function getTimerColor(seconds) {
+    const t = formatTime(seconds);
+    let color = "";
+    if (t < green) {
+      color = "zinc";
+    } else if (t < yellow) {
+      color = "green";
+    } else if (t < red) {
+      color = "yellow";
+    } else {
+      color = "red";
+    }
+    return color;
+  }
+
+  function onStartStopClick() {
+    if (interval.current) {
+      setTimerActive(false);
+      clearInterval(interval.current);
+      interval.current = null;
+    } else {
+      setTimerActive(true);
+      interval.current = setInterval(
+        () => setTimer((timer) => timer + 1),
+        1000
+      );
+    }
+  }
+
+  function onResetClick() {
+    if (interval.current) {
+      clearInterval(interval.current);
+    }
+    setTimerActive(false);
+    setTimer(0);
+  }
+
+  const timerColor = timerColorScheme[getTimerColor(timer)];
+
   return (
     <div className="bg-slate-800 h-screen w-screen flex flex-col">
       <header className="w-screen h-16 flex justify-between items-center px-10">
@@ -64,30 +143,56 @@ function App() {
           </div>
 
           <div className="w-full flex-1 flex flex-col">
-            <div className="w-full min-h-16 py-3 flex flex-col md:flex-row justify-center items-center border border-red-500">
+            <div className="w-full min-h-16 py-3 flex flex-col md:flex-row justify-center items-center">
               <DropDown
-                className={'mb-3 md:mb-0'}
+                className={"mb-3 md:mb-0"}
                 text="Green"
                 options={timingOptions}
                 selectedOption={green}
                 onOptionChange={(value) => setGreen(value)}
               />
               <DropDown
-                className={'mb-3 md:mb-0'}
+                className={"mb-3 md:mb-0"}
                 text="Yellow"
                 options={timingOptions.filter((val, i) => val > green)}
                 selectedOption={yellow}
                 onOptionChange={(value) => setYellow(value)}
               />
               <DropDown
-                className={'mb-3 md:mb-0'}
+                className={"mb-3 md:mb-0"}
                 text="Red"
                 options={timingOptions.filter((val, i) => val > yellow)}
                 selectedOption={red}
                 onOptionChange={(value) => setRed(value)}
               />
             </div>
-            <span className="text-2xl">TIMING WIDGET</span>
+            <div className="w-full min-h-16 py-3 flex flex-col md:flex-row justify-center items-center">
+              <Button
+                className={'bg-zinc-600 me-1'}
+                text={
+                  timerActive
+                    ? "Pause Timer"
+                    : timer
+                    ? "Resume Timer"
+                    : "Start Timer"
+                }
+                onClick={() => onStartStopClick()}
+              />
+              <Button
+                text={"Reset Timer"}
+                className="bg-red-800 ms-1"
+                onClick={() => onResetClick()}
+              />
+            </div>
+            <div
+              className={`flex-1 flex justify-center items-center mx-3 my-3 
+              transition-colors duration-500
+              rounded-3xl shadow-lg ring-3 ${timerColor.ring} ${timerColor.bg}`}
+            >
+              <span className={`text-3xl font-semibold transition-colors duration-500 ${timerColor.text}`}>
+                {formatTime(timer)}
+              </span>
+            </div>
           </div>
         </div>
       </div>
