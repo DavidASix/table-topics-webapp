@@ -614,6 +614,11 @@ video {
   margin-bottom: 0.75rem;
 }
 
+.mx-1 {
+  margin-left: 0.25rem;
+  margin-right: 0.25rem;
+}
+
 .mb-3 {
   margin-bottom: 0.75rem;
 }
@@ -652,6 +657,26 @@ video {
 
 .ms-1 {
   margin-inline-start: 0.25rem;
+}
+
+.me-3 {
+  margin-inline-end: 0.75rem;
+}
+
+.mb-5 {
+  margin-bottom: 1.25rem;
+}
+
+.mb-8 {
+  margin-bottom: 2rem;
+}
+
+.mb-1 {
+  margin-bottom: 0.25rem;
+}
+
+.mb-6 {
+  margin-bottom: 1.5rem;
 }
 
 .block {

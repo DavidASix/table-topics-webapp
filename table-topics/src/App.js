@@ -130,20 +130,10 @@ function App() {
               selectedOption={category}
               onOptionChange={(category) => setCategory(category)}
             />
-            <Button
-              text="Generate New Topic"
-              className="mt-3"
-              onClick={() => alert("Generating new topic...")}
-            />
-          </div>
-
-          <div className="w-full flex-1 flex flex-col justify-center items-center text-slate-900">
-            <span>Give a speech about...</span>
-            <span className="text-5xl font-bold mt-3">TABLE TOPIC</span>
           </div>
 
           <div className="w-full flex-1 flex flex-col">
-            <div className="w-full min-h-16 py-3 flex flex-col md:flex-row justify-center items-center">
+            <div className="w-full min-h-16 flex flex-col md:flex-row justify-center items-center">
               <DropDown
                 className={"mb-3 md:mb-0"}
                 text="Green"
@@ -166,30 +156,45 @@ function App() {
                 onOptionChange={(value) => setRed(value)}
               />
             </div>
-            <div className="w-full min-h-16 py-3 flex flex-col md:flex-row justify-center items-center">
+
+            <div className="w-full min-h-16 flex flex-col md:flex-row justify-center items-center">
               <Button
-                className={'bg-zinc-600 me-1'}
-                text={
-                  timerActive
-                    ? "Pause Timer"
-                    : timer
-                    ? "Resume Timer"
-                    : "Start Timer"
-                }
-                onClick={() => onStartStopClick()}
+                text="Generate New Topic"
+                className="me-1 mb-1 md:mb-0"
+                onClick={() => alert("Generating new topic...")}
               />
-              <Button
-                text={"Reset Timer"}
-                className="bg-red-800 ms-1"
-                onClick={() => onResetClick()}
-              />
+
+              <div className="flex">
+                <Button
+                  className="bg-zinc-600 mx-1 mb-1 md:mb-0"
+                  text={
+                    timerActive
+                      ? "Pause Timer"
+                      : timer
+                      ? "Resume Timer"
+                      : "Start Timer"
+                  }
+                  onClick={() => onStartStopClick()}
+                />
+
+                <Button
+                  text={"Reset Timer"}
+                  className="bg-red-800 ms-1 mb-1 md:mb-0"
+                  onClick={() => onResetClick()}
+                />
+              </div>
             </div>
+
             <div
-              className={`flex-1 flex justify-center items-center mx-3 my-3 
+              className={`flex-1 flex flex-col justify-center items-center mx-3 my-3 mb-6
               transition-colors duration-500
               rounded-3xl shadow-lg ring-3 ${timerColor.ring} ${timerColor.bg}`}
             >
-              <span className={`text-3xl font-semibold transition-colors duration-500 ${timerColor.text}`}>
+              <span>Give a speech about...</span>
+              <span className="text-5xl font-bold mt-3 mb-8">TABLE TOPIC</span>
+              <span
+                className={`text-3xl font-semibold transition-colors duration-500 ${timerColor.text}`}
+              >
                 {formatTime(timer)}
               </span>
             </div>
