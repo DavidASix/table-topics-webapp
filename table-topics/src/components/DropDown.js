@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { FaChevronCircleDown } from "react-icons/fa";
 
 export default function DropDown({
+  className,
   text,
   options,
   selectedOption,
@@ -10,7 +11,7 @@ export default function DropDown({
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="flex mb-3 relative">
+    <div className={`flex relative ${className ? className : ""}`}>
       {text && (
         <span className="text-slate-800 text-2xl font-light me-2">{text}</span>
       )}
