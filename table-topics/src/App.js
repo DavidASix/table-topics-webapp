@@ -140,6 +140,7 @@ function App() {
               Category:
             </span>
             <DropDown
+              className={"bg-slate-800 hover:bg-slate-700"}
               options={categories}
               selectedOption={category}
               defaultText='Select a category'
@@ -153,21 +154,21 @@ function App() {
                 Times:
               </span>
               <DropDown
-                className={"mb-3 md:mb-0 bg-green-900"}
+                className={"mb-3 md:mb-0 bg-green-900 hover:bg-green-800"}
                 text="Green"
                 options={timingOptions}
                 selectedOption={green}
                 onOptionChange={(value) => setGreen(value)}
               />
               <DropDown
-                className={"mb-3 md:mb-0 mx-1 md:mx-3 bg-yellow-800"}
+                className={"mb-3 md:mb-0 mx-1 md:mx-3 bg-yellow-800 hover:bg-yellow-700"}
                 text="Yellow"
                 options={timingOptions.filter((val, i) => val > green)}
                 selectedOption={yellow}
                 onOptionChange={(value) => setYellow(value)}
               />
               <DropDown
-                className={"mb-3 md:mb-0 bg-red-800"}
+                className={"mb-3 md:mb-0 bg-red-800 hover:bg-red-700"}
                 text="Red"
                 options={timingOptions.filter((val, i) => val > yellow)}
                 selectedOption={red}
@@ -178,13 +179,13 @@ function App() {
             <div className="w-full min-h-16 flex flex-col md:flex-row justify-center items-center">
               <Button
                 text="Generate New Topic"
-                className="me-1 mb-1 md:mb-0"
+                className="me-1 mb-1 md:mb-0 bg-teal-700 hover:bg-teal-600"
                 onClick={() => onClickGenerateTopic()}
               />
 
               <div className="flex">
                 <Button
-                  className="bg-zinc-600 mx-1 mb-1 md:mb-0"
+                  className="bg-zinc-600 hover:bg-zinc-500  mx-1 mb-1 md:mb-0"
                   text={
                     timerActive
                       ? "Pause"
@@ -197,7 +198,7 @@ function App() {
 
                 <Button
                   text={"Reset"}
-                  className="bg-red-800 ms-1 mb-1 md:mb-0"
+                  className="bg-red-800 hover:bg-red-700 ms-1 mb-1 md:mb-0"
                   onClick={() => onResetClick()}
                 />
               </div>
@@ -208,14 +209,19 @@ function App() {
               transition-all duration-500
               rounded-3xl shadow-lg ring-1 ${timerColor.ring} ${timerColor.bg}`}
             >
-              <span>Give a speech about...</span>
-              <span className="text-5xl font-bold mt-3 mb-8">TABLE TOPIC</span>
+              <span>
+                Give a speech about...
+              </span>
+              <span className="text-5xl font-bold mt-3 mb-8">
+                TABLE TOPIC
+              </span>
               <span
                 className={`text-3xl font-semibold transition-colors duration-500 ${timerColor.text}`}
               >
                 {formatTime(timer)}
               </span>
             </div>
+
           </div>
         </div>
       </div>

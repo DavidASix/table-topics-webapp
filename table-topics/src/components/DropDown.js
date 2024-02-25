@@ -10,7 +10,8 @@ export default function DropDown({
 }) {
   const [isOpen, setIsOpen] = useState(false);
   return (
-    <button
+    <div
+      role='button'
       onClick={() => setIsOpen(!isOpen)}
       className={`bg-slate-800 text-slate-300 px-5 py-1 rounded-full text-xl flex justify-center items-center relative  ${className ? className : ""}`}
     >
@@ -48,6 +49,6 @@ export default function DropDown({
           ))}
         </div>
       </div>
-    </button>
+    </div>
   );
 }
