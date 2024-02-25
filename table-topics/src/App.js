@@ -1,4 +1,5 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect  } from "react";
+import { analytics } from "./components/Firebase";
 
 import DropDown from "./components/DropDown";
 import Button from "./components/Button";
@@ -13,6 +14,10 @@ function App() {
   // a delay in re-renders while the ref updates the state
   const [timerActive, setTimerActive] = useState(false);
   const interval = useRef(null);
+
+  useEffect(() => {
+
+  }, [])
 
   const categories = ["Life", "Work", "School", "Family"];
   const timingOptions = [
