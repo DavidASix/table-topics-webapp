@@ -30,23 +30,28 @@ function App() {
   const timerColorScheme = {
     zinc: {
       text: "text-zinc-700",
-      ring: "ring-zinc-300",
+      ring: "ring-zinc-400",
       bg: "bg-zinc-300",
+    },
+    active: {
+      text: "text-sky-700",
+      ring: "ring-sky-200",
+      bg: "bg-sky-100",
     },
     green: {
       text: "text-green-700",
-      ring: "ring-green-300",
+      ring: "ring-green-400",
       bg: "bg-green-300",
     },
     yellow: {
       text: "text-yellow-700",
       ring: "ring-yellow-300",
-      bg: "bg-yellow-300",
+      bg: "bg-yellow-200",
     },
     red: {
-      text: "text-red-700",
-      ring: "ring-red-300",
-      bg: "bg-red-300",
+      text: "text-red-800",
+      ring: "ring-red-500",
+      bg: "bg-red-400",
     },
   };
 
@@ -63,7 +68,11 @@ function App() {
     const t = formatTime(seconds);
     let color = "";
     if (t < green) {
-      color = "zinc";
+      if (timerActive) {
+        color = "active"
+      } else {
+        color = "zinc";
+      }
     } else if (t < yellow) {
       color = "green";
     } else if (t < red) {
@@ -72,6 +81,9 @@ function App() {
       color = "red";
     }
     return color;
+  }
+
+  function onClickGenerateTopic() {
   }
 
   function onStartStopClick() {
@@ -99,7 +111,7 @@ function App() {
   const timerColor = timerColorScheme[getTimerColor(timer)];
 
   return (
-    <div className="bg-slate-800 h-screen w-screen flex flex-col">
+    <div className="bg-slate-800 min-h-screen w-screen flex flex-col">
       <header className="w-screen h-16 flex justify-between items-center px-10">
         <span className="text-slate-300 font-light">Ghub</span>
         <span className="text-slate-300 font-light">
@@ -120,36 +132,42 @@ function App() {
           </p>
         </div>
         <div
-          className="flex-1 w-11/12 flex flex-col items-center
+          className="flex-1 w-11/12 max-w-3xl flex flex-col items-center
           bg-slate-200 rounded-t-[4rem] shadow-2xl"
         >
-          <div className="w-full min-h-16 py-3 flex flex-col justify-center items-center">
+          <div className="w-full min-h-16 py-3 flex justify-center items-center">
+            <span className="hidden md:block font-light text-xl me-2">
+              Category:
+            </span>
             <DropDown
-              text="Category:"
               options={categories}
               selectedOption={category}
+              defaultText='Select a category'
               onOptionChange={(category) => setCategory(category)}
             />
           </div>
 
           <div className="w-full flex-1 flex flex-col">
-            <div className="w-full min-h-16 flex flex-col md:flex-row justify-center items-center">
+            <div className="w-full min-h-16 flex flex-row justify-center items-center">
+              <span className="hidden md:block font-light text-xl me-2">
+                Times:
+              </span>
               <DropDown
-                className={"mb-3 md:mb-0"}
+                className={"mb-3 md:mb-0 bg-green-900"}
                 text="Green"
                 options={timingOptions}
                 selectedOption={green}
                 onOptionChange={(value) => setGreen(value)}
               />
               <DropDown
-                className={"mb-3 md:mb-0"}
+                className={"mb-3 md:mb-0 mx-1 md:mx-3 bg-yellow-800"}
                 text="Yellow"
                 options={timingOptions.filter((val, i) => val > green)}
                 selectedOption={yellow}
                 onOptionChange={(value) => setYellow(value)}
               />
               <DropDown
-                className={"mb-3 md:mb-0"}
+                className={"mb-3 md:mb-0 bg-red-800"}
                 text="Red"
                 options={timingOptions.filter((val, i) => val > yellow)}
                 selectedOption={red}
@@ -161,7 +179,7 @@ function App() {
               <Button
                 text="Generate New Topic"
                 className="me-1 mb-1 md:mb-0"
-                onClick={() => alert("Generating new topic...")}
+                onClick={() => onClickGenerateTopic()}
               />
 
               <div className="flex">
@@ -169,16 +187,16 @@ function App() {
                   className="bg-zinc-600 mx-1 mb-1 md:mb-0"
                   text={
                     timerActive
-                      ? "Pause Timer"
+                      ? "Pause"
                       : timer
-                      ? "Resume Timer"
-                      : "Start Timer"
+                      ? "Resume"
+                      : "Start"
                   }
                   onClick={() => onStartStopClick()}
                 />
 
                 <Button
-                  text={"Reset Timer"}
+                  text={"Reset"}
                   className="bg-red-800 ms-1 mb-1 md:mb-0"
                   onClick={() => onResetClick()}
                 />
@@ -187,8 +205,8 @@ function App() {
 
             <div
               className={`flex-1 flex flex-col justify-center items-center mx-3 my-3 mb-6
-              transition-colors duration-500
-              rounded-3xl shadow-lg ring-3 ${timerColor.ring} ${timerColor.bg}`}
+              transition-all duration-500
+              rounded-3xl shadow-lg ring-1 ${timerColor.ring} ${timerColor.bg}`}
             >
               <span>Give a speech about...</span>
               <span className="text-5xl font-bold mt-3 mb-8">TABLE TOPIC</span>
