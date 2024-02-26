@@ -1,11 +1,13 @@
 import React, { useState, useRef, useEffect  } from "react";
 import { analytics } from "./components/Firebase";
+import { logEvent } from "firebase/analytics";
 
 import DropDown from "./components/DropDown";
 import Button from "./components/Button";
 
 function App() {
   const [category, setCategory] = useState(false);
+  const [categories, setCategories] = useState(false)
   const [green, setGreen] = useState("1:00");
   const [yellow, setYellow] = useState("1:30");
   const [red, setRed] = useState("2:00");
@@ -16,10 +18,19 @@ function App() {
   const interval = useRef(null);
 
   useEffect(() => {
-
+    let catURL = 'https://us-central1-tabletopics-webapp.cloudfunctions.net/getUniqueCategories';
+    fetch(catURL)
+      .then((res) => res.json())
+      .then((data) => {
+        console.log({data});
+        setCategories(data);
+      })
+      .catch((err) => {
+        console.log(err);
+      })
   }, [])
 
-  const categories = ["Life", "Work", "School", "Family"];
+  //const categories = ["Life", "Work", "School", "Family"];
   const timingOptions = [
     "0:15",
     "0:30",
@@ -88,7 +99,13 @@ function App() {
     return color;
   }
 
-  function onClickGenerateTopic() {
+  async function onClickGenerateTopic() {
+    logEvent(analytics, 'generate-topic-clicked')
+    try {
+      await fetch()
+    } catch (err) {
+      console.log(err)
+    }
   }
 
   function onStartStopClick() {
@@ -146,9 +163,10 @@ function App() {
             </span>
             <DropDown
               className={"bg-slate-800 hover:bg-slate-700"}
-              options={categories}
+              options={categories || []}
               selectedOption={category}
               defaultText='Select a category'
+              loading={!categories}
               onOptionChange={(category) => setCategory(category)}
             />
           </div>

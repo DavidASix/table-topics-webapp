@@ -1,26 +1,40 @@
 import React, { useState } from "react";
 import { FaChevronCircleDown } from "react-icons/fa";
+import { FaSpinner } from "react-icons/fa";
 
 export default function DropDown({
   className,
   options,
   selectedOption,
   onOptionChange,
-  defaultText
+  defaultText,
+  loading=false
 }) {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <div
       role='button'
       onClick={() => setIsOpen(!isOpen)}
-      className={`bg-slate-800 text-slate-300 px-5 py-1 rounded-full text-xl flex justify-center items-center relative  ${className ? className : ""}`}
+      className={`text-slate-300 px-5 py-1 rounded-full 
+      text-xl flex justify-center items-center relative  
+      ${className ? className : ""}
+      transition-all duration-300`}
     >
       <span>{selectedOption || defaultText || "Click to select"}</span>
-      <FaChevronCircleDown
-        className={`ms-2 
-        transform transition ease-in-out duration-200
-        ${isOpen ? "rotate-[180deg]" : "rotate-0"}`}
-      />
+      {!loading && (
+        <FaChevronCircleDown
+          size={20}
+          className={`ms-2 
+          transform transition ease-in-out duration-200
+          ${isOpen ? "rotate-[180deg]" : "rotate-0"}`}
+        />
+      )}
+      {loading && (
+        <FaSpinner
+          size={20}
+          className={`ms-2 animate-spin`}
+        />
+      )}
       <div
         className={`
           absolute z-10 min-w-32 flex flex-col top-[100%] mt-1

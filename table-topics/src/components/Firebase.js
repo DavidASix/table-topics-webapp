@@ -1,6 +1,7 @@
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
+import { getAnalytics } from "firebase/analytics";
 
 import firebaseConfig from '../assets/firebase-config.json';
 const app = initializeApp(firebaseConfig);
