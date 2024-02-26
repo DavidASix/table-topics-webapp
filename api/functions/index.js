@@ -1,13 +1,11 @@
-const {onRequest} = require("firebase-functions/v2/https");
-const logger = require("firebase-functions/logger");
-
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
-const fs = require('fs');
+const utils = require("./utilities");
+const cors = require('cors')({origin: true});
 
-admin.initializeApp();
-const db = admin.firestore();
+//const fs = require('fs');
 
+// Used to import questions into the database from local files
 // exports.importQuestions = functions.https.onRequest(async (request, response) => {
 //     try {
 //       // Read questions from JSON file
@@ -36,9 +34,11 @@ const db = admin.firestore();
 //     }
 //   });
 
-// Endpoint 1: Return unique category values
+// Returns unique categories available
 exports.getUniqueCategories = functions.https.onRequest(async (request, response) => {
+  cors(request, response, async () => {
     try {
+        await utils.initFirebase()
         const snapshot = await admin.firestore().collection('questions').select('category').get();
         const categories = new Set(snapshot.docs.map(doc => doc.data().category));
         response.json(Array.from(categories));
@@ -46,11 +46,14 @@ exports.getUniqueCategories = functions.https.onRequest(async (request, response
         console.error('Error getting unique categories:', error);
         response.status(500).send('Error fetching categories');
     }
+    });
 });
 
-// Endpoint 2: Return one random category
+// Returns one random category
 exports.getRandomCategory = functions.https.onRequest(async (request, response) => {
+  cors(request, response, async () => {
     try {
+        await utils.initFirebase()
         const snapshot = await admin.firestore().collection('questions').get();
         const documents = snapshot.docs;
 
@@ -66,10 +69,14 @@ exports.getRandomCategory = functions.https.onRequest(async (request, response) 
         console.error('Error getting random category:', error);
         response.status(500).send('Error fetching category');
     }
+    });
 });
 
+// Returns one random question within a provided category
 exports.getQuestionByCategory = functions.https.onRequest(async (request, response) => {
+    cors(request, response, async () => {
     try {
+        await utils.initFirebase()
         // Get and clean category from request body
         const rawCategory = request.body.category;
         if (!rawCategory || typeof rawCategory !== 'string') {
@@ -98,11 +105,14 @@ exports.getQuestionByCategory = functions.https.onRequest(async (request, respon
         console.error('Error getting question by category:', error);
         response.status(500).send('Error fetching question');
     }
+    });
 });
 
-// Endpoint: Fetch all documents from the 'questions' collection
+// Returns all questions
 exports.getQuestions = functions.https.onRequest(async (request, response) => {
+    cors(request, response, async () => {
     try {
+        await utils.initFirebase()
         const questionsSnapshot = await admin.firestore().collection('questions').get();
         const questions = questionsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         response.json(questions);
@@ -110,4 +120,5 @@ exports.getQuestions = functions.https.onRequest(async (request, response) => {
         console.error('Error fetching questions:', error);
         response.status(500).send('Error fetching questions');
     }
+    });
 });
