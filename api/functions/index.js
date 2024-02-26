@@ -98,7 +98,9 @@ exports.getQuestionByCategory = functions.https.onRequest(async (request, respon
 
         // Select a random question
         const randomIndex = Math.floor(Math.random() * questionsSnapshot.size);
-        const randomQuestion = questionsSnapshot.docs[randomIndex].data();
+        const randomQuestionDoc = questionsSnapshot.docs[randomIndex]
+        const randomQuestion = randomQuestionDoc.data();
+        randomQuestion.id = randomQuestionDoc.id;
 
         response.json(randomQuestion);
     } catch (error) {

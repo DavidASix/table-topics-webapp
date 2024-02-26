@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect  } from "react";
+import axios from 'axios';
 import { analytics } from "./components/Firebase";
 import { logEvent } from "firebase/analytics";
 
@@ -7,7 +8,12 @@ import Button from "./components/Button";
 
 function App() {
   const [category, setCategory] = useState(false);
-  const [categories, setCategories] = useState(false)
+  const [categories, setCategories] = useState(false);
+  const [currentTopic, setCurrentTopic] = useState(null);
+  const [topicHistory, setTopicHistory] = useState([])
+  // Topic load counter serves the purpose of counting how many attempts to find a unique
+  // question have been completed, as well as being a loading new topic indicator (!!topicLoadCounter)
+  const [topicLoadCounter, setTopicLoadCounter] = useState(null);
   const [green, setGreen] = useState("1:00");
   const [yellow, setYellow] = useState("1:30");
   const [red, setRed] = useState("2:00");
@@ -19,15 +25,9 @@ function App() {
 
   useEffect(() => {
     let catURL = 'https://us-central1-tabletopics-webapp.cloudfunctions.net/getUniqueCategories';
-    fetch(catURL)
-      .then((res) => res.json())
-      .then((data) => {
-        console.log({data});
-        setCategories(data);
-      })
-      .catch((err) => {
-        console.log(err);
-      })
+    axios.get(catURL)
+      .then(({ data }) => setCategories(data))
+      .catch((err) => console.log(err))
   }, [])
 
   //const categories = ["Life", "Work", "School", "Family"];
@@ -101,10 +101,29 @@ function App() {
 
   async function onClickGenerateTopic() {
     logEvent(analytics, 'generate-topic-clicked')
+    if (!category) {
+      return alert('Please select a category');
+    }
+    if (currentTopic) {
+      setTopicHistory([...topicHistory, {...currentTopic, timer}])
+    }
+    setTopicLoadCounter(topicLoadCounter+1)
+    // TODO: Improve alert system with custom component
+    if (topicLoadCounter > 10) {
+      return alert('Could not find more topics for this category, please select a new one!')
+    }
     try {
-      await fetch()
+      const url = 'https://us-central1-tabletopics-webapp.cloudfunctions.net/getQuestionByCategory'
+      const { data } = await axios.post(url, {category})
+      // Check the ID history if this question has been asked. If it has, recurse.
+      if (topicHistory.map(t => t.id).find(tid => tid === data.id)) {
+        return onClickGenerateTopic()
+      }
+      setCurrentTopic(data);
     } catch (err) {
       console.log(err)
+    } finally {
+      setTopicLoadCounter(null)
     }
   }
 
@@ -201,8 +220,9 @@ function App() {
 
             <div className="w-full min-h-16 flex flex-col md:flex-row justify-center items-center">
               <Button
+                disabled={!category || topicLoadCounter}
                 text="Generate New Topic"
-                className="me-1 mb-1 md:mb-0 bg-teal-700 hover:bg-teal-600"
+                className={`me-1 mb-1 md:mb-0 ${!category || topicLoadCounter ? "bg-gray-400 text-gray-300" : "bg-teal-700 hover:bg-teal-600"}`}
                 onClick={() => onClickGenerateTopic()}
               />
 
@@ -233,10 +253,12 @@ function App() {
               rounded-3xl shadow-lg ring-1 ${timerColor.ring} ${timerColor.bg}`}
             >
               <span>
-                Give a speech about...
+                {!category ? "Select a category" :
+                !currentTopic?.question ? "Generate a new topic" : 
+                "Give a speech about..."}
               </span>
-              <span className="text-5xl font-bold mt-3 mb-8">
-                TABLE TOPIC
+              <span className="text-center text-3xl font-semibold mt-2 mb-4 mx-4">
+                {currentTopic?.question || ""}
               </span>
               <span
                 className={`text-3xl font-semibold transition-colors duration-500 ${timerColor.text}`}
